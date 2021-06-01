@@ -1,0 +1,20 @@
+{
+  "name": "laravel-inertia-element-ui-crud-vue3",
+  "version": "1.0.0",
+  "description": "Laravel CRUD view library for Element-UI (Vue3)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hirenreshamwala/laravel-inertia-element-ui-crud-vue3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hirenreshamwala/laravel-inertia-element-ui-crud-vue3/issues"
+  },
+  "homepage": "https://github.com/hirenreshamwala/laravel-inertia-element-ui-crud-vue3#readme"
+}
