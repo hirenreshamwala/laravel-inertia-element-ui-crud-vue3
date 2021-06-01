@@ -10,8 +10,17 @@
     "type": "git",
     "url": "git+https://github.com/hirenreshamwala/laravel-inertia-element-ui-crud-vue3.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Element-UI",
+    "Element-Plus",
+    "Vue",
+    "CRUD",
+    "Vue3",
+    "Laravel",
+    "Inertia",
+    "InertiaJs"
+  ],
+  "author": "Hiren Reshamwala (hiren.reshamwala@gmail.com)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/hirenreshamwala/laravel-inertia-element-ui-crud-vue3/issues"

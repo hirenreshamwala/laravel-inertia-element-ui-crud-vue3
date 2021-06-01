@@ -1,4 +1,4 @@
-# Laravel Element-UI CURD
+# Laravel InertiaJs Element-UI CURD
 
 Laravel CRUD view library for Element-UI (Vue3)
 
