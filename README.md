@@ -63,7 +63,7 @@ InertiaProgress.init({ color: "#4B5563" });
 
 ## Usage
 
-1. List page (Pages/Users/List.vue)
+### 1. List page (Pages/Users/List.vue)
 
    Example list page:
 
@@ -81,11 +81,16 @@ InertiaProgress.init({ color: "#4B5563" });
                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
                        <el-crud-list :records="records"
-                           :searchText="searched"
-                           :indexRoute="'users.index'"
-                           :updateRoute="'users.edit'"
-                           :deleteRoute="'users.destroy'"
-                           :columns="columns"
+                            :isSearch="true"
+                            :isEdit="true"
+                            :isDelete="true"
+                            :sort="sort"
+                            :searchText="searched"
+                            :indexRoute="'users.index'"
+                            :updateRoute="'users.edit'"
+                            :deleteRoute="'users.destroy'"
+                            :action-width="'80px'"
+                            :columns="columns"
                        >
                        </el-crud-list>
                    </div>
@@ -161,7 +166,7 @@ InertiaProgress.init({ color: "#4B5563" });
    </script>
    ```
 
-2. Create page (Pages/Users/Create.vue)
+### 2. Create page (Pages/Users/Create.vue)
 
    Example create page:
 
@@ -207,22 +212,26 @@ InertiaProgress.init({ color: "#4B5563" });
                    {
                        "property": "name",
                        "label": "Name",
-                       "type": "text"
+                       "type": "text",
+                       "disabled": false //Default false
                    },
                    {
                        "property": "email",
                        "label": "Email",
-                       "type": "text"
+                       "type": "text",
+                       "disabled": true
                    },
                    {
                        "property": "address",
                        "label": "Address",
-                       "type": "textarea"
+                       "type": "textarea",
+                       "disabled": false
                    },
                    {
                        "property": "status",
                        "label": "Status",
-                       "type": "switch"
+                       "type": "switch",
+                       "disabled": false
                    }
                ]
            }
@@ -262,17 +271,30 @@ InertiaProgress.init({ color: "#4B5563" });
    </script>
    ```
 
+### Column options
+
+- `property`  field name
+- `label`  column display name
+- `type`  [Supported field types](#supported-form-field-types)
+- `disabled` Boolean (default `false`)
+
+
 ## Customizing Display of Columns
 
 The display of columns can be over-ridden using Vue3's Template/Slot system. An example is below showing how to over-ride the "id" column in the "List" component.
 
 You can remove `updateRoute` if you don't want edit button in action. Same for delete button, remove `deleteRoute` if you don't require.
 
+For more list options check [document](https://element-plus.org/#/en-US/component/table)
+
 Example:
 
 ```html
 <el-crud-list :records="records"
     :searchText="searched"
+    :isEdit="true"
+    :isDelete="true"
+    :isSearch="true"
     :indexRoute="'users.index'"
     :updateRoute="'users.edit'"
     :deleteRoute="'users.destroy'"
@@ -320,6 +342,7 @@ Example:
 - textarea
 - password
 - checkbox
+- radio_group
 - switch
 
 
