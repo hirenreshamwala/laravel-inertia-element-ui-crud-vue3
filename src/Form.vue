@@ -1,15 +1,16 @@
 <template>
     <div class="py-6 px-4">
-        <el-form v-if="entity" ref="form" :model="entity" label-width="120px">
+        <el-form v-if="entity" ref="form" :model="entity" label-width="140px">
             <div v-for="column in fields" :key="column">
                 <slot name="before"></slot>
-                <slot :name="'form_'+column.property" :entity="entity">
+                <slot :name="'form_'+column.property" :entity="entity" :column="column" :error="errors[column.property]">
                     <field
                         :property="column.property"
                         :label="column.label"
                         :title="column.title"
                         :options="column.options"
                         :type="column.type"
+                        :disabled="!!column.disabled"
                         :error="errors[column.property]"
                         v-model="entity[column.property]"
                     ></field>
@@ -60,14 +61,8 @@ export default {
         }
     },
     computed: {
-        pageText(){
-            if(this.entity.id !== ''){
-                return 'Update';
-            }
-            return 'Create';
-        },
         submitText(){
-            if(this.entity.id !== ''){
+            if(this.entity[this.primaryKey]){
                 return 'Update';
             }
             return 'Create';
@@ -77,12 +72,8 @@ export default {
         if (this.record){
             this.entity = this.record;
         }
-        console.log(this.entity)
     },
     methods:{
-        changeDate(){
-
-        },
         onSubmit(){
             if(this.entity[this.primaryKey]){
                 //Update
