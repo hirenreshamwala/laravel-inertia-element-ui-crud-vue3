@@ -68,8 +68,100 @@ InertiaProgress.init({ color: "#4B5563" });
    Example list page:
 
    ```html
+   <script setup>
+    import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
+    import { ElCrudList } from "laravel-inertia-element-ui-crud-vue3";
+    import { ElMessage } from 'element-plus'
+    import { onMounted, onUpdated } from "vue";
+    import { Inertia } from '@inertiajs/inertia'
+
+    const props = defineProps({
+        errors: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        },
+        record: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        },
+        records: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        },
+        searched: String,
+        success: String,
+        error: String,
+        flash: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        }
+    })
+    const columns = [
+            {
+                "name": "id",
+                "title": "#Id",
+                "sortable": true,
+                "width": "80px"
+            },
+            {
+                "name": "name",
+                "title": "Name",
+                "sortable": true
+            },
+            {
+                "name": "email",
+                "title": "Email",
+                "sortable": true
+            }
+    ];
+
+    onMounted(() => {
+        handleNotifications();
+    });
+
+    onUpdated(() => {
+        handleNotifications();
+    });
+
+    function handleNotifications(){
+        if(props.success){
+            ElMessage({
+                showClose: true,
+                message: props.success,
+                type: 'success'
+            });
+        }
+        if(props.error){
+            ElMessage({
+                showClose: true,
+                message: props.error,
+                type: 'error'
+            });
+        }
+
+        if(props.flash && props.flash.message){
+            ElMessage({
+                showClose: true,
+                message: props.flash.message,
+            });
+        }
+    }
+
+    function create(){
+        Inertia.get(route('users.create'));
+    }
+   </script>
+
    <template>
-       <app-layout>
+       <BreezeAuthenticatedLayout>
            <template #header>
                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                    Users
@@ -96,74 +188,8 @@ InertiaProgress.init({ color: "#4B5563" });
                    </div>
                </div>
            </div>
-       </app-layout>
+       </BreezeAuthenticatedLayout>
    </template>
-
-   <script>
-   import AppLayout from '@/Layouts/AppLayout'
-   import { ElCrudList } from "laravel-inertia-element-ui-crud-vue3";
-
-   export default {
-       components: {
-           AppLayout,
-           ElCrudList
-       },
-       props: ['records','searched','flash','success','error'],
-       data(){
-           return {
-               columns: [
-                   {
-                       "name": "id",
-                       "title": "#Id",
-                       "sortable": true,
-                       "width": "80px"
-                   },
-                   {
-                       "name": "name",
-                       "title": "Name",
-                       "sortable": true
-                   },
-                   {
-                       "name": "email",
-                       "title": "Email",
-                       "sortable": true
-                   }
-               ]
-           }
-       },
-       mounted() {
-           this.handleNotifications();
-       },
-       methods: {
-           handleNotifications(){
-               if(this.success){
-                   this.$message({
-                       showClose: true,
-                       message: this.success,
-                       type: 'success'
-                   });
-               }
-               if(this.error){
-                   this.$message({
-                       showClose: true,
-                       message: this.error,
-                       type: 'error'
-                   });
-               }
-
-               if(this.flash && this.flash.message){
-                   this.$message({
-                       showClose: true,
-                       message: this.flash.message,
-                   });
-               }
-           },
-           create(){
-               this.$inertia.get(route('users.create'))
-           }
-       }
-   }
-   </script>
    ```
 
 ### 2. Create page (Pages/Users/Create.vue)
@@ -171,8 +197,105 @@ InertiaProgress.init({ color: "#4B5563" });
    Example create page:
 
    ```html
+   <script setup>
+    import { Head } from '@inertiajs/inertia-vue3';
+    import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
+    import { ElCrudForm } from "laravel-inertia-element-ui-crud-vue3";
+    import { onMounted } from "vue";
+    import { genFileId, ElMessage } from 'element-plus';
+    import { Inertia } from '@inertiajs/inertia';
+
+    const props = defineProps({
+        errors: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        },
+        record: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        },
+        records: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        },
+        searched: String,
+        success: String,
+        error: String,
+        flash: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        },
+    })
+
+    const fields = [
+        {
+            "property": "name",
+            "label": "Name",
+            "type": "text",
+            "disabled": false //Default false
+        },
+        {
+            "property": "email",
+            "label": "Email",
+            "type": "text",
+            "disabled": true
+        },
+        {
+            "property": "address",
+            "label": "Address",
+            "type": "textarea",
+            "disabled": false
+        },
+        {
+            "property": "status",
+            "label": "Status",
+            "type": "switch",
+            "disabled": false
+        }
+    ];
+
+    onMounted(() => {
+        handleNotifications();
+    });
+
+    function handleNotifications(){
+        if(props.success){
+            ElMessage({
+                showClose: true,
+                message: props.success,
+                type: 'success'
+            });
+        }
+        if(props.error){
+            ElMessage({
+                showClose: true,
+                message: props.error,
+                type: 'error'
+            });
+        }
+
+        if(props.flash && props.flash.message){
+            ElMessage({
+                showClose: true,
+                message: props.flash.message,
+            });
+        }
+    }
+
+    function create(){
+        Inertia.get(route('users.create'));
+    }
+   </script>
    <template>
-       <app-layout>
+       <BreezeAuthenticatedLayout>
            <template #header>
                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                    Users
@@ -193,82 +316,8 @@ InertiaProgress.init({ color: "#4B5563" });
                    </div>
                </div>
            </div>
-       </app-layout>
+       </BreezeAuthenticatedLayout>
    </template>
-
-   <script>
-   import AppLayout from '@/Layouts/AppLayout'
-   import { ElCrudForm } from "laravel-inertia-element-ui-crud-vue3";
-
-   export default {
-       components: {
-           AppLayout,
-           ElCrudForm
-       },
-       props: ['record','flash','success','error','errors'],
-       data(){
-           return {
-               fields: [
-                   {
-                       "property": "name",
-                       "label": "Name",
-                       "type": "text",
-                       "disabled": false //Default false
-                   },
-                   {
-                       "property": "email",
-                       "label": "Email",
-                       "type": "text",
-                       "disabled": true
-                   },
-                   {
-                       "property": "address",
-                       "label": "Address",
-                       "type": "textarea",
-                       "disabled": false
-                   },
-                   {
-                       "property": "status",
-                       "label": "Status",
-                       "type": "switch",
-                       "disabled": false
-                   }
-               ]
-           }
-       },
-       mounted() {
-           this.handleNotifications();
-       },
-       methods: {
-           handleNotifications(){
-                if(this.success){
-                    this.$message({
-                        showClose: true,
-                        message: this.success,
-                        type: 'success'
-                    });
-                }
-                if(this.error){
-                    this.$message({
-                        showClose: true,
-                        message: this.error,
-                        type: 'error'
-                    });
-                }
-
-                if(this.flash && this.flash.message){
-                    this.$message({
-                        showClose: true,
-                        message: this.flash.message,
-                    });
-                }
-           },
-           create(){
-               this.$inertia.get(route('users.create'))
-           }
-       }
-   }
-   </script>
    ```
 
 ### Column options
@@ -301,12 +350,12 @@ Example:
     :columns="columns"
 >
     <!-- Custom column -->
-    <template v-slot:id="scope">
+    <template #id="scope">
         ID #{{ scope.row.id }} 
     </template>
 
     <!-- Custom action button -->
-    <template v-slot:action="scope">
+    <template #action="scope">
         <el-button size="small" type="primary" v-on:click="onClickInfo">Info</el-button>
     </template>
 </el-crud-list>
@@ -329,7 +378,7 @@ Example:
     :fields="fields"
 >
     <!-- Custom Form Field -->
-    <template v-slot:name="scope">
+    <template #form_name="scope">
         <el-input clearable v-model="scope.entity.name" placeholder="Enter full name"></el-input>
     </template>
 </el-crud-form>
