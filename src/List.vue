@@ -11,7 +11,7 @@
                     @clear="onSearch"
                     clearable>
                     <template #append>
-                        <el-button icon="el-icon-search" @click="onSearch"></el-button>
+                        <el-button :icon="SearchIcon" @click="onSearch" />
                     </template>
                 </el-input>
             </div>
@@ -113,7 +113,6 @@
                 :background="false"
                 :page-size="per_page"
                 v-model:currentPage="current_page"
-                background
                 :page-sizes="pageSize"
                 layout="sizes, prev, pager, next"
                 :total="total"
@@ -126,11 +125,14 @@
 
 <script>
 import Helpers from './Helper.vue'
+import { Search } from '@element-plus/icons'
+import { markRaw } from "vue";
 export default {
     mixins: [ Helpers ],
     data() {
         return {
             search: '',
+            SearchIcon: markRaw(Search),
             loading: false,
             loadingText: 'Loading...',
             loadingClass: '',
