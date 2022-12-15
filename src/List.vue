@@ -202,7 +202,7 @@
 import { inject, ref, reactive, onMounted, watch } from 'vue';
 const route = inject('appRoute');
 import {Inertia} from "@inertiajs/inertia";
-import Field from "./Field";
+import Field from "./Field.vue";
 import {
     Search,
     Delete,
