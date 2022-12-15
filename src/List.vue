@@ -422,9 +422,13 @@ defineExpose({
 </script>
 <style scoped>
 .el-form--inline .el-form-item{
-    margin-right: 12px;
+    margin-right: 0.75rem;
 }
 .el-form-item{
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
+}
+.mx-1{
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
 }
 </style>
