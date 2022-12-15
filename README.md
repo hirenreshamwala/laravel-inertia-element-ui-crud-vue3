@@ -31,34 +31,65 @@ app.use(ElementPlus, { locale });
 sample app.js:
 
 ```js
-require("./bootstrap");
+// Laravel + InertiaJs + Vue3 + Webpack
+import './bootstrap';
 
-// Import modules...
-import { createApp, h } from "vue";
-import {
-  App as InertiaApp,
-  plugin as InertiaPlugin,
-} from "@inertiajs/inertia-vue3";
-import { InertiaProgress } from "@inertiajs/progress";
-import ElementPlus from "element-plus";
-import "element-plus/lib/theme-chalk/index.css";
-import locale from "element-plus/lib/locale/lang/en";
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import { InertiaProgress } from '@inertiajs/progress';
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+import ElementPlus from 'element-plus'
+import 'element-plus/theme-chalk/index.css'
+import en from 'element-plus/es/locale/lang/en'
+const appEl = document.getElementById('app');
+const pageData = DecryptPage(appEl.dataset.page);
 
-const el = document.getElementById("app");
+// Must add provide('appRoute', route)
+createInertiaApp({
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) => import(`./Pages/${name}.vue`),
+    setup({ el, app, props, plugin }) {
+        return createApp({ render: () => h(app, props) })
+            .use(plugin)
+            .use(ElementPlus, { locale: en })
+            .provide('appRoute', route) // Must required for routing
+            .mixin({ methods: { route } })
+            .mount(el);
+    },
+}).mount(appEl);
 
-createApp({
-  render: () =>
-    h(InertiaApp, {
-      initialPage: JSON.parse(el.dataset.page),
-      resolveComponent: (name) => require(`./Pages/${name}`).default,
-    }),
-})
-  .mixin({ methods: { route } })
-  .use(InertiaPlugin)
-  .use(ElementPlus, { locale })
-  .mount(el);
+InertiaProgress.init({ color: '#4B5563' });
+```
 
-InertiaProgress.init({ color: "#4B5563" });
+```js
+// Laravel + InertiaJs + Vue3 + Vite
+import './bootstrap';
+import '../css/app.css';
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import { InertiaProgress } from '@inertiajs/progress';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+
+// Must add provide('appRoute', route)
+createInertiaApp({
+    title: (title) => `${title} - ${appName}`,
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    setup({ el, app, props, plugin }) {
+        return createApp({ render: () => h(app, props) })
+            .use(plugin)
+            .use(ElementPlus)
+            .use(ZiggyVue, Ziggy)
+            .provide('appRoute', route) // Must required for routing
+            .mount(el);
+    },
+});
+
+InertiaProgress.init({ color: '#4B5563' });
 ```
 
 ## Usage
@@ -77,12 +108,6 @@ InertiaProgress.init({ color: "#4B5563" });
 
     const props = defineProps({
         errors: {
-            type: Object,
-            default: () => {
-                return {};
-            }
-        },
-        record: {
             type: Object,
             default: () => {
                 return {};
@@ -379,7 +404,9 @@ Example:
 >
     <!-- Custom Form Field -->
     <template #form_name="scope">
-        <el-input clearable v-model="scope.entity.name" placeholder="Enter full name"></el-input>
+        <el-form-item :label="scope.column.label" :error="errors['name']">
+            <el-input clearable v-model="scope.entity.name" placeholder="Enter full name"></el-input>
+        </el-form-item>
     </template>
 </el-crud-form>
 ```
@@ -389,6 +416,8 @@ Example:
 
 - text
 - textarea
+- date
+- datetime
 - password
 - checkbox
 - radio_group
