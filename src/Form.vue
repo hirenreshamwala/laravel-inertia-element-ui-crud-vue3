@@ -1,165 +1,108 @@
+<template>
+    <div class="py-6 px-4">
+        <el-form v-if="entity" ref="form" :model="entity" :label-width="labelWidth" :label-position="labelPosition">
+            <div v-for="column in fields" :key="column">
+                <slot name="before" :entity="entity" :column="column" :error="errors[column.property]"></slot>
+                <slot :name="'form_'+column.property" :entity="entity" :column="column" :error="errors[column.property]">
+                    <Field
+                        :property="column.property"
+                        :label="column.label"
+                        :title="column.title"
+                        :placeholder="column.placeholder"
+                        :options="column.options"
+                        :maxlength="column.maxlength"
+                        :minlength="column.minlength"
+                        :filterable="column.filterable"
+                        :clearable="column.clearable"
+                        :show-word-limit="column.showWordLimit"
+                        :type="column.type"
+                        :disabled="!!column.disabled"
+                        :error="errors[column.property]"
+                        v-model="entity[column.property]"
+                    ></Field>
+                </slot>
+                <slot name="after" :entity="entity" :column="column" :error="errors[column.property]"></slot>
+            </div>
+            <slot name="action" :entity="entity">
+                <el-form-item>
+                    <slot name="button_before" :entity="entity"></slot>
+                    <el-button type="primary" @click="onSubmit">{{ submitTextComp }}</el-button>
+                    <el-button v-if="!hideCancel" @click="cancel()">Cancel</el-button>
+                    <slot name="button_after" :entity="entity"></slot>
+                </el-form-item>
+            </slot>
+        </el-form>
+    </div>
+</template>
+
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ElCrudList } from "laravel-inertia-element-ui-crud-vue3";
-import { ElMessage } from 'element-plus'
-import { inject, onMounted, onUpdated } from "vue";
-import { Inertia } from '@inertiajs/inertia'
+import { inject, ref, onMounted, computed } from 'vue';
 const route = inject('appRoute');
+import {Inertia} from "@inertiajs/inertia";
+import Field from "./Field.vue";
 const props = defineProps({
-    errors: {
-        type: Object,
-        default: () => {
-            return {};
-        }
-    },
+    primaryKey: { type: String, default: 'id' },
+    labelWidth: { type: String, default: '140px' },
+    labelPosition: { type: String, default: 'left' },
+    indexRoute: { type: String, required: false },
+    addRoute: { type: String, required: false },
+    updateRoute: { type: String, required: false },
+    submitText: { type: String, required: false },
+    hideCancel: { type: Boolean, required: false, default: false },
     record: {
         type: Object,
         default: () => {
-            return {};
+            return {}
         }
     },
-    records: {
+    fields: {
+        type: Array,
+        default: () => {
+            return []
+        }
+    },
+    errors: {
         type: Object,
         default: () => {
-            return {};
+            return {}
         }
-    },
-    filters: {
-        type: Object,
-        default: () => {
-            return {};
-        }
-    },
-    searched: String,
-    success: String,
-    error: String,
-    flash: {
-        type: Object,
-        default: () => {
-            return {};
-        }
-    },
-})
-
-
-const columns = [
-    {
-        "name": "id",
-        "title": "#Id",
-        "sortable": true,
-        "width": "80px"
-    },
-    {
-        "name": "name",
-        "title": "Name",
-        "sortable": true
-    },
-    {
-        "name": "email",
-        "title": "Email",
-        "sortable": true
-    },
-    {
-        "name": "phone",
-        "title": "Phone",
-        "sortable": true
-    },
-    {
-        "name": "city",
-        "title": "City",
-        "sortable": true
-    },
-    {
-        "name": "state",
-        "title": "State",
-        "sortable": true
-    },
-    {
-        "name": "pincode",
-        "title": "Pincode",
-        "sortable": true
     }
-];
+});
+const entity = ref(null);
 
 onMounted(() => {
-    handleNotifications();
+    if (props.record){
+        entity.value = props.record;
+    }
 });
+const submitTextComp = computed(() => {
+    if (props.submitText) return props.submitText;
 
-onUpdated(() => {
-    handleNotifications();
+    if(entity.value[props.primaryKey]){
+        return 'Update';
+    }
+    return 'Create';
 });
-
-function handleNotifications(){
-    if(props.success){
-        ElMessage({
-            showClose: true,
-            message: props.success,
-            type: 'success'
-        });
-    }
-    if(props.error){
-        ElMessage({
-            showClose: true,
-            message: props.error,
-            type: 'error'
-        });
-    }
-
-    if(props.flash && props.flash.message){
-        ElMessage({
-            showClose: true,
-            message: props.flash.message,
-        });
-    }
-
-    if(props.flash && props.flash.success){
-        ElMessage({
-            showClose: true,
-            message: props.flash.success,
-            type: 'success'
-        });
-    }
-
-    if(props.flash && props.flash.error){
-        ElMessage({
-            showClose: true,
-            message: props.flash.error,
-            type: 'error'
-        });
+const onSubmit = () => {
+    if(entity.value[props.primaryKey]){
+        //Update
+        if(!props.updateRoute){
+            console.error('Update route does not provided');return;
+        }
+        Inertia.put(route(props.updateRoute, entity.value[props.primaryKey]), entity.value)
+    } else {
+        // Create
+        if(!props.addRoute){
+            console.error('Add route does not provided');return;
+        }
+        Inertia.post(route(props.addRoute), entity.value)
     }
 }
-function create(){
-    Inertia.get(route('customers.create'));
-}
 
+const cancel = () => {
+    if(!props.indexRoute){
+        console.error('Index route does not provided');return;
+    }
+    Inertia.get(route(props.indexRoute))
+}
 </script>
-<template>
-    <AuthenticatedLayout title="Customers">
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Customers
-                <el-button class="float-right" size="small" @click="create">Add</el-button>
-            </h2>
-        </template>
-
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-4">
-                    <el-crud-list :records="records"
-                          :filters="filters"
-                          :indexRoute="'customers.index'"
-                          :updateRoute="'customers.edit'"
-                          :deleteRoute="'customers.destroy'"
-                          :columns="columns"
-                    >
-                        <template #filter_email="{entity}">
-                            <el-form-item label="Custom Email">
-                                <el-input v-model="entity.email" placeholder="Email"></el-input>
-                            </el-form-item>
-                        </template>
-                    </el-crud-list>
-                </div>
-            </div>
-        </div>
-    </AuthenticatedLayout>
-</template>
