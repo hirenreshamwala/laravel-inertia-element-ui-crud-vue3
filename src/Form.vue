@@ -62,7 +62,6 @@ const props = defineProps({
             return []
         }
     },
-    rules: {},
     errors: {
         type: Object,
         default: () => {
@@ -77,6 +76,14 @@ onMounted(() => {
         entity.value = props.record;
     }
 });
+const rules = computed(() => {
+    const rules = {};
+    props.fields.forEach(({property, rule}) => {
+        if(!rule || !Array.isArray(rule)) return;
+        rules[property] = rule;
+    })
+    return rules;
+})
 const submitTextComp = computed(() => {
     if (props.submitText) return props.submitText;
 
@@ -109,7 +116,6 @@ const cancel = () => {
 }
 const validate = (fn) => {
     return form.value.validate(fn);
-    // return form.value.validate.apply(null, arguments);
 }
 const resetFields = () => {
     return form.value.resetFields();
