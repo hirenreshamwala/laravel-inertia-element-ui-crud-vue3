@@ -93,6 +93,18 @@ const submitTextComp = computed(() => {
     return 'Create';
 });
 const onSubmit = () => {
+    if(Object.keys(rules.value).length === 0){
+        return submitForm()
+    }
+
+    form.value.validate(valid => {
+        if(!valid) return;
+
+        submitForm()
+    });
+}
+
+const submitForm = () => {
     if(entity.value[props.primaryKey]){
         //Update
         if(!props.updateRoute){
