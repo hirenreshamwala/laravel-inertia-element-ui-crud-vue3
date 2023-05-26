@@ -1,5 +1,5 @@
 <template>
-    <div class="py-6 px-4">
+    <div :class="{'py-6 px-4': !noContainerPadding}">
         <el-form v-if="entity" ref="form" :model="entity" :label-width="labelWidth" :label-position="labelPosition">
             <div v-for="column in fields" :key="column">
                 <slot name="before" :entity="entity" :column="column" :error="errors[column.property]"></slot>
@@ -49,6 +49,7 @@ const props = defineProps({
     updateRoute: { type: String, required: false },
     submitText: { type: String, required: false },
     hideCancel: { type: Boolean, required: false, default: false },
+    noContainerPadding: { type: Boolean, required: false, default: false },
     record: {
         type: Object,
         default: () => {
@@ -61,6 +62,7 @@ const props = defineProps({
             return []
         }
     },
+    rules: {},
     errors: {
         type: Object,
         default: () => {
@@ -69,7 +71,7 @@ const props = defineProps({
     }
 });
 const entity = ref(null);
-
+const form = ref();
 onMounted(() => {
     if (props.record){
         entity.value = props.record;
@@ -105,4 +107,15 @@ const cancel = () => {
     }
     Inertia.get(route(props.indexRoute))
 }
+const validate = (fn) => {
+    return form.value.validate(fn);
+    // return form.value.validate.apply(null, arguments);
+}
+const resetFields = () => {
+    return form.value.resetFields();
+}
+defineExpose({
+    validate,
+    resetFields
+})
 </script>
