@@ -265,6 +265,10 @@ InertiaProgress.init({ color: '#4B5563' });
             "property": "name",
             "label": "Name",
             "type": "text",
+            "rule": [
+                { required: true, message: 'Please input name', trigger: 'blur' },
+                { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
+            ],
             "disabled": false //Default false
         },
         {
@@ -351,6 +355,7 @@ InertiaProgress.init({ color: '#4B5563' });
 - `label`  column display name
 - `type`  [Supported field types](#supported-form-field-types)
 - `disabled` Boolean (default `false`)
+- `rule` Array [Doc](https://element-plus.org/en-US/component/form.html#validation)
 
 
 ## Customizing Display of Columns
