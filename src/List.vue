@@ -88,7 +88,7 @@
                         <slot name="expandable" :row="props.row"></slot>
                     </template>
                 </el-table-column>
-                <el-table-column v-for="column in columns"
+                <el-table-column v-for="column in visibleColumns"
                                  :key="column.name"
                                  :prop="column.name"
                                  :align="column.align"
@@ -199,7 +199,7 @@
 </template>
 
 <script setup>
-import { inject, ref, reactive, onMounted, watch } from 'vue';
+import { inject, ref, reactive, onMounted, watch, computed } from 'vue';
 const route = inject('appRoute');
 import {Inertia} from "@inertiajs/inertia";
 import Field from "./Field.vue";
@@ -288,7 +288,9 @@ const total = ref(0);
 const rows = ref([]);
 const emit = defineEmits(['selectAll', 'selectionChange', 'select', 'cellMouseEnter', 'cellMouseLeave', 'cellClick', 'cellDbclick', 'cellContextmenu', 'expandChange', 'headerDragend'])
 const entity = reactive({});
-
+const visibleColumns = computed(() => {
+    return props.columns.filter(e => e.visible !== false);
+});
 onMounted(() => {
     loadRecords();
     if (props.searchText){
