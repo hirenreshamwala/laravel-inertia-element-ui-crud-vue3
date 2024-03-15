@@ -4,17 +4,10 @@
             <el-form :inline="true" label-position="top" ref="form" :model="entity">
                 <div v-for="column in filters" :key="column">
                     <slot name="before_filter"></slot>
-                    <slot :name="'filter_'+column.property" :entity="entity" :column="column">
-                        <Field
-                            :property="column.property"
-                            :label="column.label"
-                            :title="column.title"
-                            :options="column.options"
-                            :type="column.type"
-                            :disabled="!!column.disabled"
-                            v-model="entity[column.property]"
-                            clearable
-                        ></Field>
+                    <slot :name="'filter_' + column.property" :entity="entity" :column="column">
+                        <Field :property="column.property" :label="column.label" :title="column.title"
+                            :options="column.options" :type="column.type" :disabled="!!column.disabled"
+                            v-model="entity[column.property]" clearable></Field>
                     </slot>
                     <slot name="after_filter"></slot>
                 </div>
@@ -28,13 +21,9 @@
             </el-form>
         </div>
         <div class="mx-auto pt-3">
-            <div :class="{'flex-row-reverse': !searchBoxLeft}" class="flex" v-if="isSearch && filters.length === 0">
+            <div :class="{ 'flex-row-reverse': !searchBoxLeft }" class="flex" v-if="isSearch && filters.length === 0">
                 <slot v-if="isSearch && filters.length === 0" name="before_search"></slot>
-                <el-input
-                    style="width: auto"
-                    :placeholder="searchPlaceholder"
-                    v-model="search"
-                    @clear="onSearch"
+                <el-input style="width: auto" :placeholder="searchPlaceholder" v-model="search" @clear="onSearch"
                     clearable>
                     <template #append>
                         <el-button :icon="Search" @click="onSearch" />
@@ -42,134 +31,69 @@
                 </el-input>
                 <slot v-if="isSearch && filters.length === 0" name="after_search"></slot>
             </div>
-            <el-table
-                v-loading="loading"
-                :element-loading-text="loadingText"
-                class="mt-4"
-                :data="rows"
-                :stripe="stripe"
-                :border="border"
-                :size="size"
-                :fit="fit"
-                :show-header="showHeader"
-                style="width: 100%"
-                :default-sort="{prop:sort.field,order:sort.order}"
-                v-on:sort-change="handleSortChange"
-                v-on:selection-change="handleSelectionChange"
-                :row-class-name="rowClassName"
-                :row-style="rowStyle"
-                :highlight-current-row="highlightCurrentRow"
-                :row-key="primaryKey"
-                :current-row-key="currentRowKey"
-                :cell-class-name="cellClassName"
-                :cell-style="cellStyle"
-                :header-row-class-name="headerRowClassName"
-                :header-row-style="headerRowStyle"
-                :header-cell-class-name="headerCellClassName"
-                :header-cell-style="headerCellStyle"
-                :span-method="spanMethod"
-                :empty-text="emptyText"
-                :default-expand-all="defaultExpandAll"
-                :expand-row-keys="expandRowKeys"
-                @select="emitSelect"
-                @select-all="emitSelectAll"
-                @selection-change="emitSelectionChange"
-                @cell-mouse-enter="emitCellMouseEnter"
-                @cell-mouse-leave="emitCellMouseLeave"
-                @cell-click="emitCellClick"
-                @cell-dblclick="emitCellDbclick"
-                @cell-contextmenu="emitCellContextmenu"
-                @expand-change="emitExpandChange"
-                @header-dragend="emitHeaderDragend"
-            >
+            <el-table v-loading="loading" :element-loading-text="loadingText" class="mt-4" :data="rows" :stripe="stripe"
+                :border="border" :size="size" :fit="fit" :show-header="showHeader" style="width: 100%"
+                v-on:sort-change="handleSortChange" v-on:selection-change="handleSelectionChange"
+                :row-class-name="rowClassName" :row-style="rowStyle" :highlight-current-row="highlightCurrentRow"
+                :row-key="primaryKey" :current-row-key="currentRowKey" :cell-class-name="cellClassName"
+                :cell-style="cellStyle" :header-row-class-name="headerRowClassName" :header-row-style="headerRowStyle"
+                :header-cell-class-name="headerCellClassName" :header-cell-style="headerCellStyle"
+                :span-method="spanMethod" :empty-text="emptyText" :default-expand-all="defaultExpandAll"
+                :expand-row-keys="expandRowKeys" @select="emitSelect" @select-all="emitSelectAll"
+                @selection-change="emitSelectionChange" @cell-mouse-enter="emitCellMouseEnter"
+                @cell-mouse-leave="emitCellMouseLeave" @cell-click="emitCellClick" @cell-dblclick="emitCellDbclick"
+                @cell-contextmenu="emitCellContextmenu" @expand-change="emitExpandChange"
+                @header-dragend="emitHeaderDragend">
                 <el-table-column v-if="selectable" type="selection" width="55"></el-table-column>
                 <el-table-column v-if="expandable" type="expand">
                     <template #default="props">
                         <slot name="expandable" :row="props.row"></slot>
                     </template>
                 </el-table-column>
-                <el-table-column v-for="column in visibleColumns"
-                                 :key="column.name"
-                                 :prop="column.name"
-                                 :align="column.align"
-                                 :resizable="column.resizable"
-                                 :class-name="column.className"
-                                 :label-class-name="column.labelClassName"
-                                 :fixed="column.fixed"
-                                 :label="column.title"
-                                 :width="column.width"
-                                 :min-width="column.minWidth"
-                                 :sortable="column.sortable" >
+                <el-table-column v-for="column in visibleColumns" :key="column.name" :prop="column.name"
+                    :align="column.align" :resizable="column.resizable" :class-name="column.className"
+                    :label-class-name="column.labelClassName" :fixed="column.fixed" :label="column.title"
+                    :width="column.width" :min-width="column.minWidth" :sortable="column.sortable">
                     <template #default="scope">
                         <slot :name="column.name" :row="scope.row">
                             <div v-if="column.type && column.type === 'status'">
-                                <el-tag v-if="fromDotNotation(scope.row, column.name) === true" type="success">Enabled</el-tag>
+                                <el-tag v-if="fromDotNotation(scope.row, column.name) === true"
+                                    type="success">Enabled</el-tag>
                                 <el-tag v-else type="danger">Disabled</el-tag>
                             </div>
                             <span v-else>{{ fromDotNotation(scope.row, column.name) }}</span>
                         </slot>
                     </template>
                 </el-table-column>
-                <el-table-column
-                    v-if="isEdit || isDelete"
-                    :prop="primaryKey"
-                    :label="actionLabel"
-                    :width="actionWidth"
-                    header-align="center"
-                    align="right"
-                >
+                <el-table-column v-if="isEdit || isDelete" :prop="primaryKey" :label="actionLabel" :width="actionWidth"
+                    header-align="center" align="right">
                     <template #default="scope">
                         <slot name="action_before" :row="scope.row"></slot>
                         <slot name="action" :row="scope.row">
-                            <el-button
-                                type="primary"
-                                class="mx-1"
-                                v-if="isEdit && !iconButtons"
-                                @click.native.prevent="editRow(scope.row)"
-                                size="small"
-                                >
+                            <el-button type="primary" class="mx-1" v-if="isEdit && !iconButtons"
+                                @click.native.prevent="editRow(scope.row)" size="small">
                                 Edit
                             </el-button>
-                            <el-tooltip
-                                v-if="isEdit && iconButtons"
-                                class="box-item"
-                                effect="dark"
-                                content="Edit"
-                                placement="top"
-                            >
-                                <el-button
-                                    class="mx-1"
-                                    type="primary"
-                                    @click.native.prevent="editRow(scope.row)"
-                                >
-                                    <el-icon><EditPen /></el-icon>
+                            <el-tooltip v-if="isEdit && iconButtons" class="box-item" effect="dark" content="Edit"
+                                placement="top">
+                                <el-button class="mx-1" type="primary" @click.native.prevent="editRow(scope.row)">
+                                    <el-icon>
+                                        <EditPen />
+                                    </el-icon>
                                 </el-button>
                             </el-tooltip>
-                            <el-popconfirm
-                                v-if="isDelete && !hasDeleteFalse(scope.row) "
-                                title="Are you sure you want to delete?"
-                                @confirm="deleteRow(scope.row)"
-                            >
+                            <el-popconfirm v-if="isDelete && !hasDeleteFalse(scope.row)"
+                                title="Are you sure you want to delete?" @confirm="deleteRow(scope.row)">
                                 <template #reference>
                                     <span>
-                                        <el-tooltip
-                                            v-if="iconButtons"
-                                            effect="dark"
-                                            content="Delete"
-                                            placement="top"
-                                        >
-                                            <el-button
-                                                class="mx-1"
-                                                type="danger"
-                                            >
-                                                <el-icon><Delete /></el-icon>
+                                        <el-tooltip v-if="iconButtons" effect="dark" content="Delete" placement="top">
+                                            <el-button class="mx-1" type="danger">
+                                                <el-icon>
+                                                    <Delete />
+                                                </el-icon>
                                             </el-button>
                                         </el-tooltip>
-                                        <el-button
-                                            v-else
-                                            type="danger"
-                                            class="mx-1"
-                                            size="small">
+                                        <el-button v-else type="danger" class="mx-1" size="small">
                                             Delete
                                         </el-button>
                                     </span>
@@ -182,17 +106,9 @@
                 <slot name="custom_action"></slot>
             </el-table>
 
-            <el-pagination
-                v-if="isPagination"
-                class="mt-4 text-right"
-                :background="false"
-                :page-size="per_page"
-                v-model:currentPage="current_page"
-                :page-sizes="pageSize"
-                layout="sizes, prev, pager, next"
-                :total="total"
-                @size-change="handlePageSizeChange"
-                @current-change="handleCurrentPageChange">
+            <el-pagination v-if="isPagination" class="mt-4 text-right" :background="false" :page-size="per_page"
+                v-model:currentPage="current_page" :page-sizes="pageSize" layout="sizes, prev, pager, next"
+                :total="total" @size-change="handlePageSizeChange" @current-change="handleCurrentPageChange">
             </el-pagination>
         </div>
     </div>
@@ -201,7 +117,8 @@
 <script setup>
 import { inject, ref, reactive, onMounted, watch, computed } from 'vue';
 const route = inject('appRoute');
-import {Inertia} from "@inertiajs/inertia";
+import { router } from '@inertiajs/vue3';
+
 import Field from "./Field.vue";
 import {
     Search,
@@ -229,30 +146,38 @@ const props = defineProps({
             return [];
         }
     },
-    pageSize: { type: Array, default: () => {
+    pageSize: {
+        type: Array, default: () => {
             return [5, 20, 50, 100]
-        }},
-    records: { type: Object, default: () => {
+        }
+    },
+    records: {
+        type: Object, default: () => {
             return {
                 data: [],
                 total: 0,
                 current_page: 1,
                 per_page: 20
             }
-        }},
-    sort: { type: Object, default: () => {
+        }
+    },
+    sort: {
+        type: Object, default: () => {
             return {
                 field: 'id',
                 order: 'descending'
             }
-        }},
-    params: { type: Object, default: () => {
+        }
+    },
+    params: {
+        type: Object, default: () => {
             return {}
-        }},
+        }
+    },
     columns: Array,
     expandRowKeys: Array,
     titles: { type: Object, default: () => { return {}; } },
-    order: { type: Object, default: () => {} },
+    order: { type: Object, default: () => { } },
     selectable: { type: Boolean, default: false },
     stripe: { type: Boolean, default: false },
     border: { type: Boolean, default: false },
@@ -265,16 +190,16 @@ const props = defineProps({
     isPagination: { type: Boolean, default: true },
     iconButtons: { type: Boolean, default: false },
     defaultExpandAll: { type: Boolean, default: false },
-    rowClassName: { type:[Function, String], default: null },
-    rowStyle: { type:[Function, String], default: null },
+    rowClassName: { type: [Function, String], default: null },
+    rowStyle: { type: [Function, String], default: null },
     highlightCurrentRow: { type: Boolean, default: false },
-    cellClassName: { type:[Function, String], default: null },
-    cellStyle: { type:[Function, String], default: null },
-    headerRowClassName: { type:[Function, String], default: null },
-    headerRowStyle: { type:[Function, String], default: null },
-    headerCellClassName: { type:[Function, String], default: null },
-    headerCellStyle: { type:[Function, String], default: null },
-    spanMethod: { type:Function, default: null },
+    cellClassName: { type: [Function, String], default: null },
+    cellStyle: { type: [Function, String], default: null },
+    headerRowClassName: { type: [Function, String], default: null },
+    headerRowStyle: { type: [Function, String], default: null },
+    headerCellClassName: { type: [Function, String], default: null },
+    headerCellStyle: { type: [Function, String], default: null },
+    spanMethod: { type: Function, default: null },
 });
 const search = ref('');
 const loading = ref(false);
@@ -293,7 +218,7 @@ const visibleColumns = computed(() => {
 });
 onMounted(() => {
     loadRecords();
-    if (props.searchText){
+    if (props.searchText) {
         search.value = props.searchText;
     }
     sort_by.value = props.sort.field;
@@ -307,7 +232,7 @@ watch(() => props.filters, (first, second) => {
     loadEntities();
 });
 const loadEntities = () => {
-    if(props.filters && props.filters.length > 0){
+    if (props.filters && props.filters.length > 0) {
         for (let i = 0; i < props.filters.length; i++) {
             const row = props.filters[i];
             entity[row.property] = row.value;
@@ -315,9 +240,9 @@ const loadEntities = () => {
     }
 };
 const loadRecords = () => {
-    if (props.records){
+    if (props.records) {
         rows.value = props.records.data;
-        if (!props.records.current_page && props.records.meta){
+        if (!props.records.current_page && props.records.meta) {
             total.value = parseInt(props.records.meta.total);
             current_page.value = parseInt(props.records.meta.current_page);
             per_page.value = parseInt(props.records.meta.per_page);
@@ -329,10 +254,10 @@ const loadRecords = () => {
     }
 }
 const editRow = (row) => {
-    Inertia.get(route(props.updateRoute, row[props.primaryKey]))
+    router.get(route(props.updateRoute, row[props.primaryKey]))
 }
 const deleteRow = (row) => {
-    Inertia.delete(route(props.deleteRoute, row[props.primaryKey]))
+    router.delete(route(props.deleteRoute, row[props.primaryKey]))
 }
 const reloadPage = () => {
     const data = {
@@ -342,11 +267,11 @@ const reloadPage = () => {
         order: sort_order.value === 'ascending' ? 'a' : 'd',
         filters: entity
     };
-    if (search.value){
+    if (search.value) {
         data['q'] = search.value
     }
-    const params = {...data, ...props.params }
-    Inertia.visit(route(props.indexRoute), {
+    const params = { ...data, ...props.params }
+    router.visit(route(props.indexRoute), {
         method: 'get',
         data: params,
     })
@@ -423,13 +348,15 @@ defineExpose({
 })
 </script>
 <style scoped>
-.el-form--inline .el-form-item{
+.el-form--inline .el-form-item {
     margin-right: 0.75rem;
 }
-.el-form-item{
+
+.el-form-item {
     margin-bottom: 0.5rem;
 }
-.mx-1{
+
+.mx-1 {
     margin-right: 0.25rem;
     margin-left: 0.25rem;
 }

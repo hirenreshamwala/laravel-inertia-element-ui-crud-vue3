@@ -1,25 +1,15 @@
 <template>
-    <div :class="{'py-6 px-4': !noContainerPadding}">
+    <div :class="{ 'py-6 px-4': !noContainerPadding }">
         <el-form v-if="entity" ref="form" :model="entity" :label-width="labelWidth" :label-position="labelPosition">
             <div v-for="column in fields" :key="column">
                 <slot name="before" :entity="entity" :column="column" :error="errors[column.property]"></slot>
-                <slot :name="'form_'+column.property" :entity="entity" :column="column" :error="errors[column.property]">
-                    <Field
-                        :property="column.property"
-                        :label="column.label"
-                        :title="column.title"
-                        :placeholder="column.placeholder"
-                        :options="column.options"
-                        :maxlength="column.maxlength"
-                        :minlength="column.minlength"
-                        :filterable="column.filterable"
-                        :clearable="column.clearable"
-                        :show-word-limit="column.showWordLimit"
-                        :type="column.type"
-                        :disabled="!!column.disabled"
-                        :error="errors[column.property]"
-                        v-model="entity[column.property]"
-                    ></Field>
+                <slot :name="'form_' + column.property" :entity="entity" :column="column"
+                    :error="errors[column.property]">
+                    <Field :property="column.property" :label="column.label" :title="column.title"
+                        :placeholder="column.placeholder" :options="column.options" :maxlength="column.maxlength"
+                        :minlength="column.minlength" :filterable="column.filterable" :clearable="column.clearable"
+                        :show-word-limit="column.showWordLimit" :type="column.type" :disabled="!!column.disabled"
+                        :error="errors[column.property]" v-model="entity[column.property]"></Field>
                 </slot>
                 <slot name="after" :entity="entity" :column="column" :error="errors[column.property]"></slot>
             </div>
@@ -38,7 +28,7 @@
 <script setup>
 import { inject, ref, onMounted, computed } from 'vue';
 const route = inject('appRoute');
-import {Inertia} from "@inertiajs/inertia";
+import { router } from "@inertiajs/vue3";
 import Field from "./Field.vue";
 const props = defineProps({
     primaryKey: { type: String, default: 'id' },
@@ -72,14 +62,14 @@ const props = defineProps({
 const entity = ref(null);
 const form = ref();
 onMounted(() => {
-    if (props.record){
+    if (props.record) {
         entity.value = props.record;
     }
 });
 const rules = computed(() => {
     const rules = {};
-    props.fields.forEach(({property, rule}) => {
-        if(!rule || !Array.isArray(rule)) return;
+    props.fields.forEach(({ property, rule }) => {
+        if (!rule || !Array.isArray(rule)) return;
         rules[property] = rule;
     })
     return rules;
@@ -87,44 +77,44 @@ const rules = computed(() => {
 const submitTextComp = computed(() => {
     if (props.submitText) return props.submitText;
 
-    if(entity.value[props.primaryKey]){
+    if (entity.value[props.primaryKey]) {
         return 'Update';
     }
     return 'Create';
 });
 const onSubmit = () => {
-    if(Object.keys(rules.value).length === 0){
+    if (Object.keys(rules.value).length === 0) {
         return submitForm()
     }
 
     form.value.validate(valid => {
-        if(!valid) return;
+        if (!valid) return;
 
         submitForm()
     });
 }
 
 const submitForm = () => {
-    if(entity.value[props.primaryKey]){
+    if (entity.value[props.primaryKey]) {
         //Update
-        if(!props.updateRoute){
-            console.error('Update route does not provided');return;
+        if (!props.updateRoute) {
+            console.error('Update route does not provided'); return;
         }
-        Inertia.put(route(props.updateRoute, entity.value[props.primaryKey]), entity.value)
+        router.put(route(props.updateRoute, entity.value[props.primaryKey]), entity.value)
     } else {
         // Create
-        if(!props.addRoute){
-            console.error('Add route does not provided');return;
+        if (!props.addRoute) {
+            console.error('Add route does not provided'); return;
         }
-        Inertia.post(route(props.addRoute), entity.value)
+        router.post(route(props.addRoute), entity.value)
     }
 }
 
 const cancel = () => {
-    if(!props.indexRoute){
-        console.error('Index route does not provided');return;
+    if (!props.indexRoute) {
+        console.error('Index route does not provided'); return;
     }
-    Inertia.get(route(props.indexRoute))
+    router.get(route(props.indexRoute))
 }
 const validate = (fn) => {
     return form.value.validate(fn);
